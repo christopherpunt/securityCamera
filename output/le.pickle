@@ -30,7 +30,7 @@ tp13
 cnumpy
 dtype
 p14
-(S'S8'
+(S'S5'
 p15
 I0
 I1
@@ -39,12 +39,12 @@ Rp17
 (I3
 S'|'
 p18
-NNNI8
+NNNI5
 I1
 I0
 tp19
 bI00
-S'chris\x00\x00\x00your mom'
+S'chrisnate\x00'
 p20
 tp21
 bsS'_sklearn_version'
