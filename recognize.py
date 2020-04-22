@@ -32,7 +32,7 @@ ap.add_argument("-r", "--recognizer", default="output/recognizer.pickle",
 	help="path to model trained to recognize faces")
 ap.add_argument("-l", "--le", default="output/le.pickle",
 	help="path to label encoder")
-ap.add_argument("-c", "--confidence", type=float, default=0.5,
+ap.add_argument("-c", "--confidence", type=float, default=0.3,
 	help="minimum probability to filter weak detections")
 args = vars(ap.parse_args())
 
@@ -59,6 +59,7 @@ def recognizeFaces(img):
     image = imutils.resize(image, width=600)
     (h, w) = image.shape[:2]
     print("image was loaded")
+    print(type(image))
 
     # construct a blob from the image
     imageBlob = cv2.dnn.blobFromImage(
