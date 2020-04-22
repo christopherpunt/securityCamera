@@ -24,13 +24,13 @@ QOS = 1
 # construct the argument parser and parse the arguments
 ap = argparse.ArgumentParser()
 
-ap.add_argument("-d", "--detector", required=True,
+ap.add_argument("-d", "--detector", default="face_detection_model",
 	help="path to OpenCV's deep learning face detector")
-ap.add_argument("-m", "--embedding-model", required=True,
+ap.add_argument("-m", "--embedding-model", default="openface_nn4.small2.v1.t7",
 	help="path to OpenCV's deep learning face embedding model")
-ap.add_argument("-r", "--recognizer", required=True,
+ap.add_argument("-r", "--recognizer", default="output/recognizer.pickle",
 	help="path to model trained to recognize faces")
-ap.add_argument("-l", "--le", required=True,
+ap.add_argument("-l", "--le", default="output/le.pickle",
 	help="path to label encoder")
 ap.add_argument("-c", "--confidence", type=float, default=0.5,
 	help="minimum probability to filter weak detections")
@@ -113,6 +113,12 @@ def recognizeFaces(img):
                 (0, 0, 255), 2)
             cv2.putText(image, text, (startX, y),
                 cv2.FONT_HERSHEY_SIMPLEX, 0.45, (0, 0, 255), 2)
+        
+        if proba > .6:
+            client.publish("chrisNate/admit", 1)
+            break
+        
+    # client.publish("chrisNate/admit", 0)
 
     # show the output image
     # cv2.imshow("Image", image)
@@ -120,6 +126,9 @@ def recognizeFaces(img):
     cv2.imwrite("output1.jpg", image)
     # cv2.waitKey(0)
 
+# Callback when a message is published
+def on_publish(client,userdata, mid):
+    print("MQTT data published")
 
 # Callback when a connection has been established with the MQTT broker
 def on_connect(client, userdata, rc, *extra_params):
@@ -142,11 +151,11 @@ def on_message(client, data, msg):
 client = mqtt.Client()
 client.on_connect = on_connect
 client.on_message = on_message
+client.on_publish = on_publish
 
 # Connect to MQTT broker and subscribe to the button topic
 client.connect(BROKER, PORT, 60)
 client.subscribe("chrisNate/Image", qos=QOS)
-client.loop_start()
 client.loop_start()
 while True:
     time.sleep(10)
