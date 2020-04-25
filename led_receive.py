@@ -3,8 +3,12 @@ import paho.mqtt.client as mqtt
 import RPi.GPIO as GPIO
 
 # Constants
-BROKER = 'mqtt.eclipse.org'
-PORT = 1883
+BROKER = 'iot.cs.calvin.edu'
+USERNAME = "cs300" # Put broker username here
+PASSWORD = "safeIoT" # Put broker password here
+TOPIC = 'chrisNate/admit'
+CERTS = '/etc/ssl/certs/ca-certificates.crt'
+PORT = 8883
 QOS = 0
 unlockedLED = 16
 lockedLED = 20
@@ -39,7 +43,7 @@ def on_message(client, data, msg):
     if msg.topic == "chrisNate/admit":
         print("Received message: LED = ", int(msg.payload))
 
-    if(msg.topic == "chrisNate/admit"):
+    if(msg.topic == TOPIC):
         if int(msg.payload) == 1:
             print("admitted")
             GPIO.output(unlockedLED, True)
@@ -59,11 +63,13 @@ def on_message(client, data, msg):
 
 # Setup MQTT client and callbacks
 client = mqtt.Client()
+client.username_pw_set(USERNAME, password=PASSWORD)
+client.tls_set(CERTS)
 client.on_connect = on_connect
 client.on_message = on_message
 # Connect to MQTT broker and subscribe to the button topic
 client.connect(BROKER, PORT, 60)
-client.subscribe("chrisNate/admit", qos=QOS)
+client.subscribe(TOPIC, qos=QOS)
 client.loop_start()
 
 try:

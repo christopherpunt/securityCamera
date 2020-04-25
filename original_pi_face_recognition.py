@@ -14,10 +14,15 @@ import cv2
 import send_emails
 
 # Constants
-BROKER = 'mqtt.eclipse.org'
-PORT = 1883
+BROKER = 'iot.cs.calvin.edu'
+USERNAME = "cs300" # Put broker username here
+PASSWORD = "safeIoT" # Put broker password here
+TOPIC = 'chrisNate/admit'
+CERTS = '/etc/ssl/certs/ca-certificates.crt'
+PORT = 8883
 QOS = 0
 OUTPUT_FILE = "output1.jpg"
+emailAddress = "sc300CU@gmail.com"
 
 # construct the argument parser and parse the arguments
 ap = argparse.ArgumentParser()
@@ -42,6 +47,8 @@ def on_connect(client, userdata, flags, rc):
 
 # Setup MQTT client and callbacks
 client = mqtt.Client()
+client.username_pw_set(USERNAME, password=PASSWORD)
+client.tls_set(CERTS)
 client.on_connect = on_connect
 client.on_publish = on_publish
 # Connect to MQTT broker
@@ -61,13 +68,12 @@ print("[INFO] starting video stream...")
 vs = VideoStream(usePiCamera=True).start()
 time.sleep(2.0)
 
-# start the FPS counter
-fps = FPS().start()
 
 # loop over frames from the video file stream
 while True:
 	faceDetected = False
 	faceRecognized = False
+
 	# grab the frame from the threaded video stream and resize it
 	# to 500px (to speedup processing)
 	frame = vs.read()
@@ -145,10 +151,10 @@ while True:
 		if faceRecognized:
 			print("face was recognized")
 			#publish to mqtt broker
-			client.publish('chrisNate/admit', 1)
+			client.publish(TOPIC, 1)
 		else:
-			client.publish('chrisNate/admit', 0)
+			client.publish(TOPIC, 0)
 			print("sending email")
-			send_emails.sendEmail("sc300CU@gmail.com", "sc300CU@gmail.com", "Failed Authentication Alert", "", OUTPUT_FILE)
+			send_emails.sendEmail(emailAddress, emailAddress, "Failed Authentication Alert", "", OUTPUT_FILE)
 
 	time.sleep(2.0)
