@@ -1,0 +1,14 @@
+[Unit]
+Description=facial recognition detection from published mqtt images
+After=network.target mosquitto.service
+StartLimitIntervalSec=0
+
+[Service]
+Type=simple
+Restart=always
+RestartSec=1
+User=pi
+ExecStart=/home/pi/pi-face-recognition/
+
+[Install]
+WantedBy=multi-user.target
