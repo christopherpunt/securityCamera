@@ -11,6 +11,10 @@ import imutils
 import pickle
 import time
 import cv2
+import send_emails
+
+#constants
+OUTPUT_FILE = "output1.jpg"
 
 # Constants
 BROKER = 'mqtt.eclipse.org'
@@ -147,5 +151,7 @@ while True:
 			client.publish('chrisNate/admit', 1)
 		else:
 			client.publish('chrisNate/admit', 0)
+			print("sending email")
+			send_emails.sendEmail("sc300CU@gmail.com", "sc300CU@gmail.com", "Failed Authentication Alert", OUTPUT_FILE)
 
 	time.sleep(2.0)
