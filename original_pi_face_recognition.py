@@ -27,8 +27,8 @@ detector = cv2.CascadeClassifier(args["cascade"])
 
 # initialize the video stream and allow the camera sensor to warm up
 print("[INFO] starting video stream...")
-vs = VideoStream(src=0).start()
-# vs = VideoStream(usePiCamera=True).start()
+# vs = VideoStream(src=0).start()
+vs = VideoStream(usePiCamera=True).start()
 time.sleep(2.0)
 
 # start the FPS counter
@@ -99,22 +99,28 @@ while True:
 		cv2.putText(frame, name, (left, y), cv2.FONT_HERSHEY_SIMPLEX,
 			0.75, (0, 255, 0), 2)
 
-	# display the image to our screen
-	cv2.imshow("Frame", frame)
-	key = cv2.waitKey(1) & 0xFF
+	if len(encodings) > 0:
+		print("writing the image to file")
+		cv2.imwrite("output1.jpg", frame)
+	time.sleep(2.0)
 
-	# if the `q` key was pressed, break from the loop
-	if key == ord("q"):
-		break
 
-	# update the FPS counter
-	fps.update()
+# 	# display the image to our screen
+# 	cv2.imshow("Frame", frame)
+# 	key = cv2.waitKey(1) & 0xFF
 
-# stop the timer and display FPS information
-fps.stop()
-print("[INFO] elasped time: {:.2f}".format(fps.elapsed()))
-print("[INFO] approx. FPS: {:.2f}".format(fps.fps()))
+# 	# if the `q` key was pressed, break from the loop
+# 	if key == ord("q"):
+# 		break
 
-# do a bit of cleanup
-cv2.destroyAllWindows()
-vs.stop()
+# 	# update the FPS counter
+# 	fps.update()
+
+# # stop the timer and display FPS information
+# fps.stop()
+# print("[INFO] elasped time: {:.2f}".format(fps.elapsed()))
+# print("[INFO] approx. FPS: {:.2f}".format(fps.fps()))
+
+# # do a bit of cleanup
+# cv2.destroyAllWindows()
+# vs.stop()
