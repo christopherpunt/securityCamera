@@ -10,6 +10,10 @@ import imutils
 import pickle
 import time
 import cv2
+import send_emails
+
+#constants
+OUTPUT_FILE = "output1.jpg"
 
 # construct the argument parser and parse the arguments
 ap = argparse.ArgumentParser()
@@ -100,8 +104,10 @@ while True:
 			0.75, (0, 255, 0), 2)
 
 	if len(encodings) > 0:
-		print("writing the image to file")
-		cv2.imwrite("output1.jpg", frame)
+		print("writing image {} to file".format(OUTPUT_FILE))
+		cv2.imwrite(OUTPUT_FILE, frame)
+		print("sending email...")
+		send_emails.sendEmail("sc300CU@gmail.com", "sc300CU@gmail.com", "Failed Authentication Alert", OUTPUT_FILE)
 	time.sleep(2.0)
 
 
