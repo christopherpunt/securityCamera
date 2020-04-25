@@ -13,14 +13,11 @@ import time
 import cv2
 import send_emails
 
-#constants
-OUTPUT_FILE = "output1.jpg"
-
 # Constants
 BROKER = 'mqtt.eclipse.org'
 PORT = 1883
 QOS = 0
-
+OUTPUT_FILE = "output1.jpg"
 
 # construct the argument parser and parse the arguments
 ap = argparse.ArgumentParser()
@@ -152,6 +149,6 @@ while True:
 		else:
 			client.publish('chrisNate/admit', 0)
 			print("sending email")
-			send_emails.sendEmail("sc300CU@gmail.com", "sc300CU@gmail.com", "Failed Authentication Alert", OUTPUT_FILE)
+			send_emails.sendEmail("sc300CU@gmail.com", "sc300CU@gmail.com", "Failed Authentication Alert", "", OUTPUT_FILE)
 
 	time.sleep(2.0)

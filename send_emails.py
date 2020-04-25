@@ -19,7 +19,7 @@ def sendEmail(sender, receiver, subject, body, attachment):
     msg.attach(MIMEText(body, 'plain'))
 
     filename = attachment
-    attachment = open("attachment", "rb")
+    attachment = open(attachment, "rb")
 
     part = MIMEBase('application', 'octet-stream')
     part.set_payload((attachment).read())
