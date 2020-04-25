@@ -4,12 +4,19 @@
 # import the necessary packages
 from imutils.video import VideoStream
 from imutils.video import FPS
+import paho.mqtt.client as mqtt
 import face_recognition
 import argparse
 import imutils
 import pickle
 import time
 import cv2
+
+# Constants
+BROKER = 'mqtt.eclipse.org'
+PORT = 1883
+QOS = 0
+
 
 # construct the argument parser and parse the arguments
 ap = argparse.ArgumentParser()
@@ -18,6 +25,28 @@ ap.add_argument("-c", "--cascade", required=True,
 ap.add_argument("-e", "--encodings", required=True,
 	help="path to serialized db of facial encodings")
 args = vars(ap.parse_args())
+
+
+# Callback when a message is published
+def on_publish(client, userdata, mid):
+    print("MQTT data published")
+
+# Callback when connecting to the MQTT broker
+def on_connect(client, userdata, flags, rc):
+    if rc==0:
+        print('Connected to',BROKER)
+    else:
+        print('Connection to',BROKER,'failed. Return code=',rc)
+        os._exit(1)
+
+# Setup MQTT client and callbacks
+client = mqtt.Client()
+client.on_connect = on_connect
+client.on_publish = on_publish
+# Connect to MQTT broker
+client.connect(BROKER, PORT, 60)
+client.loop_start()
+
 
 # load the known faces and embeddings along with OpenCV's Haar
 # cascade for face detection
@@ -36,6 +65,8 @@ fps = FPS().start()
 
 # loop over frames from the video file stream
 while True:
+	faceDetected = False
+	faceRecognized = False
 	# grab the frame from the threaded video stream and resize it
 	# to 500px (to speedup processing)
 	frame = vs.read()
@@ -59,6 +90,10 @@ while True:
 	# compute the facial embeddings for each face bounding box
 	encodings = face_recognition.face_encodings(rgb, boxes)
 	names = []
+
+	# if any faces are detected, set faceDetected to True
+	if (len(encodings) > 0):
+		faceDetected = True
 
 	# loop over the facial embeddings
 	for encoding in encodings:
@@ -86,6 +121,10 @@ while True:
 			# of votes (note: in the event of an unlikely tie Python
 			# will select first entry in the dictionary)
 			name = max(counts, key=counts.get)
+
+			# if there is a face recognized set faceRecognized to True
+			if (name != "Unknown"):
+				faceRecognized = True
 		
 		# update the list of names
 		names.append(name)
@@ -99,28 +138,14 @@ while True:
 		cv2.putText(frame, name, (left, y), cv2.FONT_HERSHEY_SIMPLEX,
 			0.75, (0, 255, 0), 2)
 
-	if len(encodings) > 0:
+	if faceDetected:
 		print("writing the image to file")
 		cv2.imwrite("output1.jpg", frame)
+		if faceRecognized:
+			print("face was recognized")
+			#publish to mqtt broker
+			client.publish('chrisNate/admit', 1)
+		else:
+			client.publish('chrisNate/admit', 0)
+
 	time.sleep(2.0)
-
-
-# 	# display the image to our screen
-# 	cv2.imshow("Frame", frame)
-# 	key = cv2.waitKey(1) & 0xFF
-
-# 	# if the `q` key was pressed, break from the loop
-# 	if key == ord("q"):
-# 		break
-
-# 	# update the FPS counter
-# 	fps.update()
-
-# # stop the timer and display FPS information
-# fps.stop()
-# print("[INFO] elasped time: {:.2f}".format(fps.elapsed()))
-# print("[INFO] approx. FPS: {:.2f}".format(fps.fps()))
-
-# # do a bit of cleanup
-# cv2.destroyAllWindows()
-# vs.stop()

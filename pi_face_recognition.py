@@ -47,6 +47,7 @@ encodings = face_recognition.face_encodings(rgb, boxes)
 names = []
 
 # loop over the facial embeddings
+print(len(encodings))
 for encoding in encodings:
 	# attempt to match each face in the input image to our known
 	# encodings
@@ -54,6 +55,7 @@ for encoding in encodings:
 	name = "Unknown"
 
 	# check to see if we have found a match
+	print(matches)
 	if True in matches:
 		# find the indexes of all matched faces then initialize a
 		# dictionary to count the total number of times each face
@@ -82,8 +84,9 @@ for ((top, right, bottom, left), name) in zip(boxes, names):
 	y = top - 15 if top - 15 > 15 else top + 15
 	cv2.putText(image, name, (left, y), cv2.FONT_HERSHEY_SIMPLEX, 0.75, (0, 255, 0), 2)
 
-print("writing the image to file")
-cv2.imwrite("output.jpg", image)
+if (encodings > 0):
+	print("writing the image to file")
+	cv2.imwrite("output.jpg", image)
 
 
 # # do a bit of cleanup
