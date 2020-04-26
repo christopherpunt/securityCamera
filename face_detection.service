@@ -5,7 +5,7 @@ After=network-online.target
 [Service]
 Type=simple
 Restart=always
-ExecStart=/home/pi/original_pi_face_detection.py
+ExecStart=/usr/bin/python3 /home/pi/securityCamera/original_pi_face_detection.py
 User=pi
 
 [Install]

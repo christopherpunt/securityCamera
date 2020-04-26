@@ -12,7 +12,7 @@ PORT = 8883
 QOS = 0
 unlockedLED = 16
 lockedLED = 20
-DELAY = 2.0 # how long the lock stays unlocked
+DELAY = 4.0 # how long the lock stays unlocked
 BLINKS = 6
 
 # Initialize GPIO input and output
