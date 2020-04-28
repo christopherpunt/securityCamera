@@ -76,6 +76,8 @@ try:
     while True:
         time.sleep(10)
 except KeyboardInterrupt:
+    GPIO.output(unlockedLED, False)
+    GPIO.output(lockedLED, False)
     print("Done")
     GPIO.cleanup()
     client.disconnect()
