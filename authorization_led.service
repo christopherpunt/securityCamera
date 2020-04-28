@@ -1,0 +1,12 @@
+[Unit]
+Description=Start Face Detection Service
+After=network-online.target
+
+[Service]
+Type=simple
+Restart=always
+ExecStart=/usr/bin/python3 /home/pi/securityCamera/led_receive.py
+User=pi
+
+[Install]
+WantedBy=multi-user.target
