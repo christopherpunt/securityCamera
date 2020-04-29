@@ -24,7 +24,10 @@ CERTS = '/etc/ssl/certs/ca-certificates.crt'
 PORT = 8883
 QOS = 0
 OUTPUT_FILE = "output1.jpg"
-emailAddress = "sc300CU@gmail.com"
+EMAIL = "sc300CU@gmail.com"
+SMTP_SERVER = "smtp.gmail.com"
+SMTP_PORT = 587
+
 
 # construct the argument parser and parse the arguments
 ap = argparse.ArgumentParser()
@@ -88,8 +91,7 @@ while True:
 
 	# detect faces in the grayscale frame
 	rects = detector.detectMultiScale(gray, scaleFactor=1.1, 
-		minNeighbors=5, minSize=(30, 30),
-		flags=cv2.CASCADE_SCALE_IMAGE)
+		minNeighbors=5, minSize=(30, 30), flags=cv2.CASCADE_SCALE_IMAGE)
 
 	# OpenCV returns bounding box coordinates in (x, y, w, h) order
 	# but we need them in (top, right, bottom, left) order, so we
@@ -141,11 +143,10 @@ while True:
 	# loop over the recognized faces
 	for ((top, right, bottom, left), name) in zip(boxes, names):
 		# draw the predicted face name on the image
-		cv2.rectangle(frame, (left, top), (right, bottom),
-			(0, 255, 0), 2)
+		cv2.rectangle(frame, (left, top), (right, bottom), (0, 255, 0), 2)
 		y = top - 15 if top - 15 > 15 else top + 15
-		cv2.putText(frame, name, (left, y), cv2.FONT_HERSHEY_SIMPLEX,
-			0.75, (0, 255, 0), 2)
+		cv2.putText(frame, name, (left, y), cv2.FONT_HERSHEY_SIMPLEX, 0.75,
+			(0, 255, 0), 2)
 
 	if faceDetected:
 		print("writing the image to file")
@@ -157,6 +158,8 @@ while True:
 		else:
 			client.publish(TOPIC, 0)
 			print("sending email")
-			send_emails.sendEmail(emailAddress, emailAddress, "Failed Authentication Alert", "", OUTPUT_FILE)
+			#send an email to ourselves to notify Failed Authentication
+			send_emails.sendEmail(EMAIL, EMAIL, "Failed Authentication Alert", 
+				"", OUTPUT_FILE, SMTP_SERVER, SMTP_PORT)
 
 	time.sleep(2.0)
