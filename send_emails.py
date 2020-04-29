@@ -1,3 +1,13 @@
+'''
+What: send_emails.py allows emails to be sent to and smtp email server
+        given the proper parameters described in the sendEmails function.
+        This function is used to send an notification email when the securityCamera
+        does not recognize a face.
+Who: Chris Punt and Nate Herder
+When: 04/29/2020
+Why: CS 300 Calvin University
+'''
+
 import smtplib
 import os
 from email.mime.multipart import MIMEMultipart
@@ -12,7 +22,7 @@ from email import encoders
 # subject: email subject
 # body: email body
 # attachment: attachment to be added to email
-# smtp: email smtp server address
+# smtp: smtp server address
 # port: port for smtp server
 def sendEmail(sender, receiver, subject, body, attachment, smtp, port):
 
@@ -40,7 +50,9 @@ def sendEmail(sender, receiver, subject, body, attachment, smtp, port):
 
     server = smtplib.SMTP(smtp, port)
     server.starttls()
+
     try:
+        #retrieve the email password from environment variable
         password = os.getenv('EMAIL_PASSWORD')
         server.login(fromaddr, password)
         text = msg.as_string()

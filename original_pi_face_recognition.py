@@ -1,9 +1,19 @@
-#! /usr/bin/python3
+'''
+What: original_facial_recognition.py is the main script that grabs frames from the
+		pi camera, detects faces, and loops through the encodings created from running
+		encode_faces.py which are used to detect faces and grant authorization. If a face
+		is detected and mqtt message is published to a secure mqtt broker topic. If and unknown
+		face is detected a mqtt message is published to a secure mqtt broker topic and an email
+		is sent containing an attached image of the unknown indivual as a notification of the
+		attempted access.
+Who: Chris Punt and Nate Herder
+When: 04/29/2020
+Why: CS 300 Calvin University
 
-# USAGE
-# python pi_face_recognition.py --cascade haarcascade_frontalface_default.xml --encodings encodings.pickle
+Modified from: https://www.pyimagesearch.com/2018/06/25/raspberry-pi-face-recognition/
+USAGE: python pi_face_recognition.py --cascade haarcascade_frontalface_default.xml --encodings encodings.pickle
+'''
 
-# import the necessary packages
 from imutils.video import VideoStream
 from imutils.video import FPS
 import paho.mqtt.client as mqtt
@@ -14,11 +24,16 @@ import pickle
 import time
 import cv2
 import send_emails
+import os
 
 # Constants
+try:
+    PASSWORD = os.getenv('CALVIN_MQTT_PASSWORD')
+except:
+    print('No environment varialble set for CALVIN_MQTT_PASSWORD')
+    exit(1)
 BROKER = 'iot.cs.calvin.edu'
 USERNAME = "cs300" # Put broker username here
-PASSWORD = "safeIoT" # Put broker password here
 TOPIC = 'chrisNate/admit'
 CERTS = '/etc/ssl/certs/ca-certificates.crt'
 PORT = 8883
@@ -48,7 +63,7 @@ def on_connect(client, userdata, flags, rc):
         print('Connected to',BROKER)
     else:
         print('Connection to',BROKER,'failed. Return code=',rc)
-        os._exit(1)
+        exit(1)
 
 # Setup MQTT client and callbacks
 client = mqtt.Client()

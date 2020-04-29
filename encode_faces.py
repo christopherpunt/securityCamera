@@ -1,10 +1,17 @@
-# USAGE
-# When encoding on laptop, desktop, or GPU (slower, more accurate):
-# python encode_faces.py --dataset dataset --encodings encodings.pickle --detection-method cnn
-# When encoding on Raspberry Pi (faster, more accurate):
-# python encode_faces.py --dataset dataset --encodings encodings.pickle --detection-method hog
+'''
+What: encode_faces.py uses the images in the /dataset directory and encode them
+	into 128-d vectors. The face encodings created using the face_recognition
+	library and are encoded into an encodings.pickly file to be used in the
+	facial detection script. These encodings need to be made prior to running
+	original_facial_recognition.py
+Who: Chris Punt and Nate Herder
+When: 04/29/2020
+Why: CS 300 Calvin University
 
-# import the necessary packages
+Sources: https://www.pyimagesearch.com/2018/06/25/raspberry-pi-face-recognition/
+USAGE: python encode_faces.py --dataset dataset --encodings encodings.pickle --detection-method hog
+'''
+
 from imutils import paths
 import face_recognition
 import argparse
@@ -18,8 +25,8 @@ ap.add_argument("-i", "--dataset", required=True,
 	help="path to input directory of faces + images")
 ap.add_argument("-e", "--encodings", required=True,
 	help="path to serialized db of facial encodings")
-ap.add_argument("-d", "--detection-method", type=str, default="cnn",
-	help="face detection model to use: either `hog` or `cnn`")
+ap.add_argument("-d", "--detection-method", type=str, default="hog",
+	help="face detection model to use: `hog`")
 args = vars(ap.parse_args())
 
 # grab the paths to the input images in our dataset
