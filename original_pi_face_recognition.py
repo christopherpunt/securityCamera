@@ -23,7 +23,7 @@ TOPIC = 'chrisNate/admit'
 CERTS = '/etc/ssl/certs/ca-certificates.crt'
 PORT = 8883
 QOS = 0
-OUTPUT_FILE = "output1.jpg"
+OUTPUT_FILE = "/home/pi/securityCamera/output1.jpg"
 emailAddress = "sc300CU@gmail.com"
 
 # construct the argument parser and parse the arguments
@@ -149,7 +149,7 @@ while True:
 
 	if faceDetected:
 		print("writing the image to file")
-		cv2.imwrite("output1.jpg", frame)
+		cv2.imwrite(OUTPUT_FILE, frame)
 		if faceRecognized:
 			print("face was recognized")
 			#publish to mqtt broker
