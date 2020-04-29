@@ -1,15 +1,16 @@
 '''
-What: encode_faces.py uses the images in the /dataset directory and encode them
-	into 128-d vectors. The face encodings created using the face_recognition
-	library and are encoded into an encodings.pickly file to be used in the
-	facial detection script. These encodings need to be made prior to running
-	original_facial_recognition.py
+What: encode_faces.py uses the images in the /dataset directory and encode
+	them into 128-d vectors. The face encodings created using the 
+	face_recognition library and are encoded into an encodings.pickly file 
+	to be used in the facial detection script. These encodings need to be 
+	made prior to running original_facial_recognition.py.
 Who: Chris Punt and Nate Herder
 When: 04/29/2020
 Why: CS 300 Calvin University
 
 Sources: https://www.pyimagesearch.com/2018/06/25/raspberry-pi-face-recognition/
-USAGE: python encode_faces.py --dataset dataset --encodings encodings.pickle --detection-method hog
+USAGE: python encode_faces.py --dataset dataset --encodings encodings.pickle 
+		--detection-method hog
 '''
 
 from imutils import paths

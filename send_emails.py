@@ -1,8 +1,8 @@
 '''
 What: send_emails.py allows emails to be sent to and smtp email server
         given the proper parameters described in the sendEmails function.
-        This function is used to send an notification email when the securityCamera
-        does not recognize a face.
+        This function is used to send an notification email when the
+        securityCamera does not recognize a face.
 Who: Chris Punt and Nate Herder
 When: 04/29/2020
 Why: CS 300 Calvin University
@@ -58,5 +58,6 @@ def sendEmail(sender, receiver, subject, body, attachment, smtp, port):
         text = msg.as_string()
         server.sendmail(fromaddr, toaddr, text)
     except:
-        print("Unable to login to email. Environment Variable EMAIL_PASSWORD required.")
+        print("Unable to login to email. Environment Variable EMAIL_PASSWORD \
+            required.")
         server.quit()

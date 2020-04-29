@@ -1,17 +1,19 @@
 '''
-What: original_facial_recognition.py is the main script that grabs frames from the
-		pi camera, detects faces, and loops through the encodings created from running
-		encode_faces.py which are used to detect faces and grant authorization. If a face
-		is detected and mqtt message is published to a secure mqtt broker topic. If and unknown
-		face is detected a mqtt message is published to a secure mqtt broker topic and an email
-		is sent containing an attached image of the unknown indivual as a notification of the
-		attempted access.
+What: original_facial_recognition.py is the main script that grabs frames from
+ 		thepi camera, detects faces, and loops through the encodings created 
+		from running encode_faces.py which are used to detect faces and grant 
+		authorization. If a face is detected and mqtt message is published to 
+		a secure mqtt broker topic. If and unknown face is detected a mqtt 
+		message is published to a secure mqtt broker topic and an email is sent
+		containing an attached image of the unknown indivual as a notification 
+		of the attempted access.
 Who: Chris Punt and Nate Herder
 When: 04/29/2020
 Why: CS 300 Calvin University
 
-Modified from: https://www.pyimagesearch.com/2018/06/25/raspberry-pi-face-recognition/
-USAGE: python pi_face_recognition.py --cascade haarcascade_frontalface_default.xml --encodings encodings.pickle
+Sources: https://www.pyimagesearch.com/2018/06/25/raspberry-pi-face-recognition/
+USAGE: python pi_face_recognition.py --cascade haarcascade_frontalface_default.xml 
+			--encodings encodings.pickle
 '''
 
 from imutils.video import VideoStream
@@ -38,7 +40,6 @@ TOPIC = 'chrisNate/admit'
 CERTS = '/etc/ssl/certs/ca-certificates.crt'
 PORT = 8883
 QOS = 0
-
 OUTPUT_FILE = "/home/pi/securityCamera/output1.jpg"
 EMAIL = "sc300CU@gmail.com"
 SMTP_SERVER = "smtp.gmail.com"
