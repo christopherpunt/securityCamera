@@ -13,7 +13,7 @@ import paho.mqtt.client as mqtt
 import RPi.GPIO as GPIO
 import os
 
-# Constants
+# MQTT Constants
 try:
     PASSWORD = os.getenv('CALVIN_MQTT_PASSWORD')
 except:
@@ -21,30 +21,53 @@ except:
     exit(1)
 BROKER = 'iot.cs.calvin.edu'
 USERNAME = "cs300" # Put broker username here
-TOPIC = 'chrisNate/admit'
+TOPIC = 'chrisNate/lock'
 CERTS = '/etc/ssl/certs/ca-certificates.crt'
 PORT = 8883
 QOS = 0
+
+# other constants
 UNLOCKED_LED = 16
 LOCKED_LED = 20
-DELAY = 4.0 # how long the lock stays unlocked
+UNLOCKED_DELAY = 4.0 # how long the lock stays unlocked
 BLINKS = 6
+BLINK_DELAY = .2
+MAIN_THREAD_DELAY = 10
 
-# Initialize GPIO input and output
+#state variables
+LOCKED = 0
+UNLOCKED = 1
+state = LOCKED
+
+# Initialize GPIO input and output for LEDs
 GPIO.setmode(GPIO.BCM)
 GPIO.setup(UNLOCKED_LED, GPIO.OUT)
 GPIO.setup(LOCKED_LED, GPIO.OUT)
-GPIO.output(UNLOCKED_LED, False)
-GPIO.output(LOCKED_LED, True)
 
 
 #blinks the red led to notify that authorization failed and system is locked
 def blink(led):
     for count in range(BLINKS):
         GPIO.output(led, True)
-        time.sleep(0.2)
+        time.sleep(BLINK_DELAY)
         GPIO.output(led, False)
-        time.sleep(0.2)
+        time.sleep(BLINK_DELAY)
+
+# function that handles locking the lock (LEDs representing a lock)
+def lock():
+    global state
+    global LOCKED
+    GPIO.output(UNLOCKED_LED, False)
+    GPIO.output(LOCKED_LED, True)
+    state = LOCKED
+
+# function that handles unlocking the lock (LEDs representing a lock)
+def unlock():
+    global state
+    global UNLOCKED
+    GPIO.output(UNLOCKED_LED, True)
+    GPIO.output(LOCKED_LED, False)
+    state = UNLOCKED
 
 # Callback when connecting to the MQTT broker
 def on_connect(client, userdata, flags, rc):
@@ -56,24 +79,25 @@ def on_connect(client, userdata, flags, rc):
 
 # Callback when client receives a PUBLISH message from the broker
 def on_message(client, data, msg):
-    if msg.topic == "chrisNate/admit":
+    if msg.topic == TOPIC:
         print("Received message: LED = ", int(msg.payload))
 
     if(msg.topic == TOPIC):
-        if int(msg.payload) == 1:
+        if int(msg.payload) == UNLOCKED:
             print("admitted")
-            GPIO.output(UNLOCKED_LED, True)
-            GPIO.output(LOCKED_LED, False)
+            unlock()
 
             #lock after timer has expired
-            time.sleep(DELAY)
-            GPIO.output(UNLOCKED_LED, False)
-            GPIO.output(LOCKED_LED, True)   
-        elif int(msg.payload) == 0:
+            time.sleep(UNLOCKED_DELAY)
+            lock()
+
+        elif int(msg.payload) == LOCKED:
             print("not admitted")
             blink(LOCKED_LED) 
-            GPIO.output(LOCKED_LED, True) # ensure lock is still locked
+            lock()
 
+
+lock() #ensure device is locked on startup
 
 # Setup MQTT client and callbacks
 client = mqtt.Client()
@@ -81,6 +105,7 @@ client.username_pw_set(USERNAME, password=PASSWORD)
 client.tls_set(CERTS)
 client.on_connect = on_connect
 client.on_message = on_message
+
 # Connect to MQTT broker and subscribe to the button topic
 client.connect(BROKER, PORT, 60)
 client.subscribe(TOPIC, qos=QOS)
@@ -88,7 +113,7 @@ client.loop_start()
 
 try:
     while True:
-        time.sleep(10)
+        time.sleep(MAIN_THREAD_DELAY)
 except KeyboardInterrupt:
     GPIO.output(UNLOCKED_LED, False)
     GPIO.output(LOCKED_LED, False)

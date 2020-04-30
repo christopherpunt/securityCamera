@@ -1,5 +1,5 @@
 '''
-What: original_facial_recognition.py is the main script that grabs frames from
+What: face_recognition.py is the main script that grabs frames from
  		thepi camera, detects faces, and loops through the encodings created 
 		from running encode_faces.py which are used to detect faces and grant 
 		authorization. If a face is detected and mqtt message is published to 
@@ -36,14 +36,16 @@ except:
     exit(1)
 BROKER = 'iot.cs.calvin.edu'
 USERNAME = "cs300" # Put broker username here
-TOPIC = 'chrisNate/admit'
+TOPIC = 'chrisNate/lock'
 CERTS = '/etc/ssl/certs/ca-certificates.crt'
 PORT = 8883
 QOS = 0
-OUTPUT_FILE = "/home/pi/securityCamera/output1.jpg"
+OUTPUT_FILE = "/home/pi/securityCamera/output.jpg"
 EMAIL = "sc300CU@gmail.com"
 SMTP_SERVER = "smtp.gmail.com"
 SMTP_PORT = 587
+CAMERA_SETUP_DELAY = 2.0
+FRAME_DELAY = 2.0
 
 # construct the argument parser and parse the arguments
 ap = argparse.ArgumentParser()
@@ -87,7 +89,7 @@ detector = cv2.CascadeClassifier(args["cascade"])
 print("[INFO] starting video stream...")
 # vs = VideoStream(src=0).start()
 vs = VideoStream(usePiCamera=True).start()
-time.sleep(2.0)
+time.sleep(CAMERA_SETUP_DELAY)
 
 
 # loop over frames from the video file stream
@@ -178,4 +180,4 @@ while True:
 			send_emails.sendEmail(EMAIL, EMAIL, "Failed Authentication Alert", 
 				"", OUTPUT_FILE, SMTP_SERVER, SMTP_PORT)
 
-	time.sleep(2.0)
+	time.sleep(FRAME_DELAY)
