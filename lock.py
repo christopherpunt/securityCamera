@@ -1,5 +1,5 @@
 '''
-What: led_receive.py has mqtt callbacks that subscribe to a secure mqtt
+What: lock.py has mqtt callbacks that subscribe to a secure mqtt
         broker and waits for locked and unlocked state of the security
         camera. It represents the locked and unlocked state of the IoT
         lock by changing LEDs depending on state.

@@ -3,7 +3,7 @@ What: encode_faces.py uses the images in the /dataset directory and encode
 	them into 128-d vectors. The face encodings created using the 
 	face_recognition library and are encoded into an encodings.pickly file 
 	to be used in the facial detection script. These encodings need to be 
-	made prior to running original_facial_recognition.py.
+	made prior to running face_detection.py.
 Who: Chris Punt and Nate Herder
 When: 04/29/2020
 Why: CS 300 Calvin University
